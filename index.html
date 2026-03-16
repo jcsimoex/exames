@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulamento de Provas e Exames</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2eb;
+    --ink: #1a1714;
+    --ink-muted: #6b6560;
+    --rule: #c9c3b8;
+    --accent-basico: #2c4a2e;
+    --accent-secundario: #2a3d5c;
+    --accent-comuns: #5c3020;
+    --btn-h: clamp(120px, 22vw, 200px);
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Barlow Condensed', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(26,23,20,0.04) 27px, rgba(26,23,20,0.04) 28px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(10px, 1.8vw, 12px);
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+
+  .rule-line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--rule);
+    margin: 1.25rem auto 0;
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .nav-btn {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: clamp(1rem, 3vw, 1.5rem) clamp(1.25rem, 4vw, 2rem);
+    min-height: var(--btn-h);
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: var(--ink);
+    transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1);
+  }
+
+  .nav-btn:first-child { border-radius: 4px 4px 0 0; }
+  .nav-btn:last-child  { border-radius: 0 0 4px 4px; }
+
+  .nav-btn--basico    { --clr: var(--accent-basico); }
+  .nav-btn--secundario{ --clr: var(--accent-secundario); }
+  .nav-btn--comuns    { --clr: var(--accent-comuns); }
+
+  .nav-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--clr);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .nav-btn:hover::before,
+  .nav-btn:focus-visible::before { opacity: 1; }
+
+  .nav-btn:hover { transform: scaleY(1.015); transform-origin: center; }
+  .nav-btn:active { transform: scaleY(0.98); }
+
+  .btn-num {
+    position: absolute;
+    top: clamp(1rem, 3vw, 1.5rem);
+    left: clamp(1.25rem, 4vw, 2rem);
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(36px, 8vw, 72px);
+    font-weight: 400;
+    color: rgba(255,255,255,0.07);
+    line-height: 1;
+    user-select: none;
+    transition: color 0.25s ease, transform 0.25s ease;
+    z-index: 1;
+  }
+
+  .nav-btn:hover .btn-num {
+    color: rgba(255,255,255,0.12);
+    transform: scale(1.05);
+  }
+
+  .btn-label {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .btn-label-sub {
+    font-size: clamp(9px, 1.6vw, 11px);
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    transition: color 0.25s ease;
+  }
+
+  .btn-label-main {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(22px, 5.5vw, 40px);
+    font-weight: 400;
+    color: #fff;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    transition: letter-spacing 0.25s ease;
+  }
+
+  .nav-btn:hover .btn-label-main { letter-spacing: 0.04em; }
+
+  .btn-arrow {
+    position: relative;
+    z-index: 2;
+    width: clamp(32px, 5vw, 44px);
+    height: clamp(32px, 5vw, 44px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 1rem;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+    align-self: flex-end;
+  }
+
+  .nav-btn:hover .btn-arrow {
+    border-color: rgba(255,255,255,0.6);
+    transform: translateX(4px);
+  }
+
+  .btn-arrow svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: rgba(255,255,255,0.7);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.25s ease;
+  }
+
+  .nav-btn:hover .btn-arrow svg { stroke: #fff; }
+
+  footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+
+  @media (min-width: 500px) {
+    .nav-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .nav-btn--basico {
+      grid-column: 1;
+      grid-row: 1;
+      border-radius: 4px 0 0 0;
+    }
+    .nav-btn--secundario {
+      grid-column: 2;
+      grid-row: 1;
+      border-radius: 0 4px 0 0;
+    }
+    .nav-btn--comuns {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      border-radius: 0 0 4px 4px;
+    }
+    .nav-btn--comuns .btn-num { font-size: clamp(40px, 7vw, 80px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-btn, .btn-num, .btn-label-main, .btn-arrow, .btn-arrow svg { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Despacho Normativo n.º 3/2026</p>
+    <h1>Regulamento de<br><em>Provas e Exames</em></h1>
+    <span class="rule-line"></span>
+  </header>
+
+  <nav class="nav-grid" role="navigation" aria-label="Navegação principal">
+
+    <a href="basico.html" class="nav-btn nav-btn--basico" aria-label="Ensino Básico">
+      <span class="btn-num" aria-hidden="true">I</span>
+      <div class="btn-label">
+        <span class="btn-label-sub">Capítulo II</span>
+        <span class="btn-label-main">Básico</span>
+      </div>
+      <div class="btn-arrow" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </div>
+    </a>
+
+    <a href="secundario.html" class="nav-btn nav-btn--secundario" aria-label="Ensino Secundário">
+      <span class="btn-num" aria-hidden="true">II</span>
+      <div class="btn-label">
+        <span class="btn-label-sub">Capítulo III</span>
+        <span class="btn-label-main">Secundário</span>
+      </div>
+      <div class="btn-arrow" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </div>
+    </a>
+
+    <a href="comuns.html" class="nav-btn nav-btn--comuns" aria-label="Disposições Comuns">
+      <span class="btn-num" aria-hidden="true">III</span>
+      <div class="btn-label">
+        <span class="btn-label-sub">Capítulo IV</span>
+        <span class="btn-label-main">Disposições Comuns</span>
+      </div>
+      <div class="btn-arrow" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </div>
+    </a>
+
+  </nav>
+
+  <footer>Ensinos Básico e Secundário &middot; 2025–2028</footer>
+</div>
+</body>
+</html>

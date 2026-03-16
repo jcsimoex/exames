@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Ensino Secundário</title>
+    <style>
+        :root {
+            --primary: #5c2d91;
+            --success: #28a745;
+            --error: #dc3545;
+            --background: #f4f7f6;
+            --card-bg: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            padding-bottom: 10px;
+        }
+        .top-reset {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0 10px;
+            gap: 10px;
+        }
+        .top-reset button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            cursor: pointer;
+        }
+        .top-reset button:hover {
+            filter: brightness(0.9);
+        }
+        .info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .question-card {
+            background: var(--card-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .question-title {
+            font-weight: 600;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        .option-label {
+            display: flex;
+            align-items: baseline;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1.1em;
+        }
+        .option-label:hover:not(.disabled) {
+            background-color: #e2e6ea;
+        }
+        .option-label.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        .option-label input {
+            margin-right: 15px;
+            transform: translateY(2px);
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover:not(:disabled) {
+            filter: brightness(0.85);
+        }
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .btn-next {
+            background-color: #17a2b8;
+        }
+        .btn-next:hover:not(:disabled) {
+            background-color: #138496;
+            filter: none;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+            font-size: 1.1em;
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .option-correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+        }
+        .option-incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--error) !important;
+        }
+        #results {
+            background: var(--card-bg);
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            display: none;
+        }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .stat-correct { background-color: #d4edda; color: #155724; }
+        .stat-incorrect { background-color: #f8d7da; color: #721c24; }
+        .progress-container {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2em;
+            color: var(--primary);
+        }
+        .section-header {
+            background-color: #e9ecef;
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            font-weight: bold;
+            border-left: 4px solid var(--primary);
+        }
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-icon {
+            width: 46px;
+            height: 46px;
+            padding: 0;
+            font-size: 1.4em;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Avaliação Ensino Secundário</h1>
+    <div class="top-reset">
+        <button type="button" onclick="restartQuiz()" aria-label="Reiniciar questionário">&#x21BB;</button>
+        <button type="button" id="btn-continue-top" onclick="continueQuiz()" aria-label="Continuar a responder" style="display: none;">&#x21AA;</button>
+        <button type="button" id="btn-results-top" onclick="showResults()" aria-label="Ver resultados finais" style="display: none;">&#x1F4CB;</button>
+        <button type="button" onclick="window.location.href='index.html'" aria-label="Voltar à página inicial">&#x2302;</button>
+    </div>
+    
+    <div class="info" id="intro-screen">
+        <p>Este questionário interativo contém 100 perguntas baseadas no Regulamento.</p>
+        <p><strong>Modo Sequencial:</strong> Terá de responder a uma pergunta de cada vez para poder avançar.</p>
+        <button class="btn" onclick="startQuiz()">Iniciar Questionário</button>
+        <button class="btn btn-next" style="margin-top: 10px;" onclick="window.location.href='index.html'">Voltar à página inicial</button>
+    </div>
+
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-container">
+            Pergunta <span id="current-q-num">1</span> de <span id="total-q-num">100</span>
+        </div>
+        
+        <div class="question-card" id="question-card">
+            <div id="section-display" class="section-header"></div>
+            <div class="question-title" id="question-text"></div>
+            <ul class="options" id="options-list"></ul>
+            <div class="feedback" id="feedback-msg"></div>
+        </div>
+
+        <button type="button" class="btn" id="btn-submit" onclick="submitAnswer()">Responder</button>
+        <div class="nav-controls">
+            <button type="button" class="btn btn-next btn-icon" id="btn-prev-nav" onclick="prevQuestionNav()" aria-label="Pergunta anterior">&#x276E;</button>
+            <button type="button" class="btn btn-next btn-icon" onclick="window.location.href='index.html'" aria-label="Voltar à página inicial">&#x2302;</button>
+            <button type="button" class="btn btn-next btn-icon" id="btn-next-nav" onclick="nextQuestionNav()" aria-label="Próxima pergunta">&#x276F;</button>
+        </div>
+    </div>
+
+    <div id="results">
+        <h2>Resultados Finais</h2>
+        <div class="score-circle" id="score-circle">0%</div>
+        <div class="stat-row">
+            <div class="stat stat-correct">Certas: <span id="count-correct">0</span></div>
+            <div class="stat stat-incorrect">Erradas: <span id="count-incorrect">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            // SECÇÃO I - INSCRIÇÕES EM PROVAS E EXAMES DO ENSINO SECUNDÁRIO
+            { s: "SECÇÃO I - INSCRIÇÕES EM PROVAS E EXAMES DO ENSINO SECUNDÁRIO", q: "Em que plataformas os alunos autopropostos realizam a inscrição?", o: ["A) Por formulário em papel CTT", "B) Presencialmente junto do diretor da turma", "C) Exclusivamente online", "D) Nas sedes das Juntas de Freguesia"], a: 2 },
+
+            // SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A prova é reapreciada sempre:", o: ["A) Em metade dos itens", "B) Na sua totalidade, independentemente das alegações", "C) Apenas na área reclamada", "D) Se o erro for superior a 10%"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Se o requerimento de reapreciação incidir exclusivamente sobre erro na soma das cotações, há lugar a alegação e depósito?", o: ["A) Sim, deve pagar 25 euros", "B) Não há lugar a alegação nem é devido depósito", "C) Apenas alegação sem depósito", "D) Depósito de 10 euros"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A quem compete a retificação dos erros de soma nas provas de exames finais nacionais?", o: ["A) Ao Diretor da Turma", "B) Ao Diretor da Escola", "C) Ao Conselho de Turma", "D) Ao JNE (Júri Nacional de Exames)"], a: 3 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A retificação dos erros de soma das cotações em provas a nível de escola do ensino secundário é da competência:", o: ["A) Do Delegado de Saúde", "B) Do Ministério da Educação", "C) Do Diretor da escola", "D) Do JNE exclusively"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A apresentação do requerimento de reapreciação da componente escrita adia a prestação da componente oral nas 2.ª fases?", o: ["A) Sim, sempre", "B) Apenas se o aluno tiver justificação clínica", "C) Não, não adia a prestação da outra componente", "D) O aluno fica dispensado da oral"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Para onde submete o diretor de escola o processo de reapreciação de exames e até quando?", o: ["A) Para o JNE até 5 dias após pedido", "B) Online, até ao dia útil seguinte ao termo do prazo inicial", "C) Em papel diretamente para o IAVE", "D) Fica retido na escola 2 meses"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Quem designa o professor relator encarregado de efetuar a reapreciação aos exames?", o: ["A) JNE (Júri Nacional de Exames)", "B) Conselho Pedagógico da Escola", "C) Diretor de Turma", "D) Inspeção-Geral de Educação"], a: 0 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "O que acontece se um professor já tiver classificado inicialmente a prova e for nomeado relator para a mesma?", o: ["A) Será avaliado a par e passo por outro", "B) Ele não pode ser designado professor relator se classificou previamente a prova", "C) É-lhe atribuída remuneração extra", "D) Tem total legitimidade se estiver no anonimato"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "No parecer do professor relator sobre uma reapreciação, o que deve constar obrigatoriamente?", o: ["A) A nota interna do aluno", "B) Uma recomendação punitiva", "C) Fundamentação técnica e científica relativa à classificação", "D) Assinatura do encarregado de educação"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Pode a nova classificação após a reapreciação da prova, ser inferior à inicial?", o: ["A) Sim, pode ser inferior, igual ou superior à inicial", "B) Não, a nota nunca desce", "C) Só pode ser igual ou superior", "D) Pode descer no máximo 1 valor"], a: 0 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "O presidente do JNE deve recorrer a um segundo professor relator quando:", o: ["A) A nota subir muito", "B) Houver discrepância notória ou circunstâncias objetivas excecionais", "C) O aluno solicitar por escrito", "D) Houver provas digitais"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Quem tem o parecer do primeiro relator em sua posse quando faz a sua proposta?", o: ["A) O avaliador automático", "B) O Diretor de turma", "C) O segundo professor relator", "D) A Associação Académica"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A classificação da reapreciação que possa causar a reprovação a um aluno que já tinha sido aprovado na nota inicial:", o: ["A) Respeitará a nota despromovida sem excepções", "B) Tem como limite mínimo ser a mínima necessária para garantir aprovação", "C) O processamento é revertido e a prova volta para o primeiro avaliador", "D) Deve aplicar tempo suplementar extra"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Após a decisão das reapreciações, por que meio são os resultados comunicados oficialmente aos requerentes?", o: ["A) Por email individual", "B) Por notificação dos CTT", "C) Afixação em lugar de estilo na escola nas datas estabelecidas no calendário", "D) Por SMS via EduQA"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A escola pode disponibilizar cópias anonimizadas dos pareceres dos relatores de reapreciação?", o: ["A) Sim, a pedido do aluno/encarregado, sempre que possível no próprio dia de afixação", "B) Não, os pareceres são secretos", "C) A escola tem de cobrar 25 euros adicionais para os mostrar", "D) Só após terminar o ano escolar por completo"], a: 0 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "O processo de reclamação após a decisão de reapreciação é apresentado a quem?", o: ["A) Ao Tribunal Administrativo", "B) À Inspeção-Geral", "C) Ao Presidente do JNE", "D) Ao Diretor do IAVE"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "O período para entregar uma reclamação na escola é de:", o: ["A) Dois dias úteis seguintes à afixação dos resultados da reapreciação", "B) Cinco dias úteis", "C) Duas semanas", "D) No próprio dia obrigatoriamente"], a: 0 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Uma reclamação após reapreciação com elementos identificativos do aluno na sua argumentação, tem que desfecho?", o: ["A) É retificada e re-submetida pela escola", "B) É indeferida liminarmente", "C) É analisada com maior brevidade", "D) Fica apenas condicionada no JNE"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Uma queixa de reclamação pode versar fundamentalmente sobre:", o: ["A) Condições da sala onde se fez a prova", "B) Vício processual e discordância na aplicação dos critérios de classificação", "C) O número de disciplinas em falta para concluir a escolaridade", "D) Doenças e indisposições do aluno"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A reclamação é analisada por:", o: ["A) Um conselho executivo regional", "B) O mesmo professor que inicialmente a classificou", "C) Professores especialistas designados pelo JNE", "D) Professores recém licenciados"], a: 2 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Em sede de reclamação de exame é possível haver a retificação de erros?", o: ["A) Não", "B) Sim, a retificação de eventuais erros pelo professor especialista é legítima", "C) Apenas na componente de escolha múltipla", "D) Apenas com voto aprovado do agrupamento de exames"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "Qual o prazo máximo do JNE para ditar decisão ou comunicar o resultado da reclamação?", o: ["A) 10 dias úteis", "B) 30 dias úteis contados a partir da data de entrega na escola", "C) 20 dias seguidos", "D) Ilimitado"], a: 1 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "A decisão que recair sobre a reclamação pelo presidente do JNE é:", o: ["A) Passível de recurso via correio", "B) Sugestiva (as escolas decidem se a aplicam)", "C) Reavaliada no ano seguinte", "D) Definitiva e não passível de outra impugnação administrativa"], a: 3 },
+            { s: "SECÇÃO II - EXAMES FINAIS NACIONAIS DO ENSINO SECUNDÁRIO", q: "O depósito nos processos onde o aluno perdeu a reclamação inicial com sucesso na última fase de reclamação:", o: ["A) É faturado como imposto fixo de 25€", "B) Fica à guarda do estado na DGES", "C) É restituído ao requerente", "D) Contabiliza para a prova da 2.ª fase em falta"], a: 2 },
+
+            // SECÇÃO III - PROVAS DE EQUIVALÊNCIA À FREQUÊNCIA DO ENSINO SECUNDÁRIO
+            { s: "SECÇÃO III - PROVAS DE EQUIVALÊNCIA À FREQUÊNCIA DO ENSINO SECUNDÁRIO", q: "As provas de equivalência à frequência do ensino secundário destinam-se a:", o: ["A) Melhorar a nota final", "B) Alunos que não frequentaram a disciplina ou faltaram", "C) Substituir exames nacionais", "D) Alunos de mérito"], a: 1 },
+
+            // SECÇÃO IV - MELHORIAS
+            { s: "SECÇÃO IV - MELHORIAS", q: "É possível um aluno melhorar a classificação e reclassificar o exame com códigos de prova diferentes perante o regulamento nos seus processos com as mesmas disciplinas:", o: ["A) Sim, contanto que o aluno repita a avaliação do IAVE", "B) Sendo os códigos para a prova os que obtiveram a 1ª aprovação nas competências formativas ou nacionais, será estritamente por esses idênticos os re-exames aplicáveis das avaliações.", "C) Ele executa provas de outro ano compatível nos termos práticos se requeridos e aprovado IAVE Exames", "D) Somente código novo se aprovado"], a: 1 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Os estudantes com diploma internacional que lhes atribuíu de competência nos seus currículos aprovada do ano/ciclo estão no concurso condicionados de repetir as exames para via nacional e prova secundário para que fins em PT (Ensino e sistema educacional português estrangeiro para equivalências):", o: ["A) A regra proibe fazer avaliações de disciplinas nacionais como o exame via PT (provas ensino) na base de Melhoria quando já validada no currículo em ensino formativo em escola fora e de cariz no sistema estrangeiros.", "B) Podem de facto melhorar de igual nos seus despachos das vias nacionais PT pelas normas regulatórias na escola com equivalência do seu grau secundarial formativo ao sistema.", "C) Sim desde pagamentos suplementares autoproposto exames.", "D) N.d.a."], a: 0 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Os limites às avaliações formativas do aluno no regime escolar e ao longo do concurso condicional dependem de solução até quando o tempo excede os seus limites legais de precalço regulatório em vigor nos condicionados do ensino escolar?", o: ["A) Pelo menos sete de sete dias após a data das provas a título final das pautas originais nos recintos escolares afixadas legalmente", "B) No semestre imediatamente transato ao das provas nos cadernos na afixação.", "C) O suprimentar à falta nas inscrições das escolas não deverá nunca cruzar além das afixadas avaliações na tabela dos exames originais exauridas (Afizações Finais).", "D) Em outubro das reuniões."], a: 2 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Quando a pessoa faz exame em Nível Escola e opta num exame Nacional Final para o Ensino Superior o seu exame não a substitui a si e no secundário do ano letivo de modo ao da Secção nas condicionalismos dos exames para ingresso superior a nível Nacional do aluno em prova:", o: ["A) Porque Nacional não o invalida para esse exame em regime próprio a niel superior às Finais na base formativo das JNE em PT e IAVE", "B) Na escola não se combinam provas escola+nacional se a mesma se referir da disciplina sob a decorrer esse escolar ano.", "C) Para superior fica para fase 3 de provas (Escola superior do acesso e suas tutelas).", "D) Podem a mesma disciplina as duas em sistema (Provas em si)."], a: 1 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "RTP do JNE com 2.º Relatores em JNE avaliam na Reapreciação de ensino em Exame os cadernos sem consultar do JNE prévio no exame e o avalia da primeira fase?", o: ["A) Têm conhecimentos propostos pelo do 1º relator", "B) Ficam cegos ao processo anterior com de a sua análise isenta do JNE pautas e não sendo o jNE PT.", "C) Ao IAVE para conhecimento", "D) A nota vem anulada do 1 relator da escola base de JNE não ficando e recaindo cego sem a sua."], a: 0 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Que validam o uso das Finais as fase 2ª com Finais em base Exames a e o aluno na falta atestadas como no Secundário no aluno com a disciplina fase superior de fase (o acesso à Faculdade):", o: ["A) Elas são utilizáveis e validam as das vagas das 2ª Fases no candidato", "B) Excluem por ser as nacionais com Finais a validam das e nos cursos de JNE fase 1 em base de acesso 2", "C) As vagas sã as de superiores de Fases da 1ª.", "D) Ao Secundário o DGE superior de Finais no base em DGE"], a: 0 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Reclamações na sua de fundamento com processos JNE em Fases de Nacional e a base no ensino se for as Exames e JNE: ", o: ["A) Requer os cadernos nos pais", "B) Os itens em alvo às sua reclamação podem das já objectivadas nas reapreciada as suas quer reclamadas, e tbm se o aluno nada alegou e foi alvo das mexidas das classificação do relator", "C) O aluno da nas escolhas múltiplas Finais", "D) Nao os os de JNE em Finais na fase de DGE"], a: 1 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "Em suma, uma reapreciação aos Exames no secundário pode envolver uma retificação automática e sem processos documentais ao director das Escolas exames nos JNE de Ensino Sec...", o: ["A) Se for do erro múltipla escolha (somatórios), e sem exigencias alegação, só JNE / Diretor conserta", "B) Nunca", "C) Sendo as Finais JNE do ensino Base DGE nas orais.", "D) O próprio conselho dita a retificacao da na de JNE com do IAVE em Dge"], a: 0 },
+            { s: "SECÇÃO IV - MELHORIAS", q: "No acesso dos 1066 termos de documento que regulamentam, e na fase e exames e a Faltas, o Diretor e nas Exceções de exames nas e Finais de JNE:", o: ["A) Os Exames de nivel DGE nas orais Finais JNE de e Finais no das JNE", "B) Prova o Director no processo JNE", "C) É a entidade ou orgão escolar imediato na escola a quem o aluno ou o tutor tem de começar na DGE por remeter a JNE e fundamentar.", "D) Ao Presidente IAVE de imediato."], a: 2 },
+
+            // SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "A autorização para as adaptações relativas à realização das provas e exames do secundário pode recair nos ombros de:", o: ["A) Diretor da Escola e Presidente do JNE", "B) Do Ministério em sede Parlamentar", "C) Câmaras Municipais", "D) Centros de Saúde da região"], a: 0 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Alunos com a medida adicional 'adaptações curriculares significativas':", o: ["A) Realizam as provas por tablet", "B) Realizam exames com os demais, mas num plano separado", "C) Não realizam exames finais nacionais nem provas de equivalência à frequência para efeitos de aprovação e de ciclo", "D) Realizam as exames na 3.ª fase de agosto exclusivamente"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "As adaptações autorizadas do processo de avaliação devem ser:", o: ["A) Coerentes e baseadas apenas sobre queixa informal", "B) Fundamentadas no processo individual (RTP/Processo de aprendizagem/ensino)", "C) Realizadas com o encarregado de educação via app móvel", "D) Universais de forma a abranger também turmas que não precisem"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "O processo de requerer aplicação de adaptações compreende cópia expressa e anuência:", o: ["A) Do psicólogo independente e assistente social", "B) Assinado pelo encarregado de educação ou pelo aluno (quando maior)", "C) Pelo notário mais próximo", "D) Pela federação portuguesa de escolas"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Nos pedidos de adaptações para a Direção do exame submetidos a aprovação do Presidente do JNE, existe a obrigatoriedade de envio:", o: ["A) De gravação vídeo comprovando dislexia", "B) De Relatório médico (ou de técnico da especialidade) aplicável", "C) Pagamento da taxa médica em suplemento", "D) Fotografias biográficas"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Um autoproposto que pretenda renovar a adaptação que teve ano passado (com despacho passado do mesmo órgão aprovador), é obrigado a novos papéis clínicos?", o: ["A) Sim, de 6 em 6 meses", "B) Não, pode substituir os documentos enumerados no processo pelo despacho de autorização de adaptação", "C) Tem isenção sem precisar do despacho", "D) Sim, são processos distintos impreterivelmente"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "As adaptações de exames de 1.ª fase perdem validade caso se vá à 2.ª fase do mesmo ano escolar?", o: ["A) Perdem", "B) Sendo exames novos, de facto as regras decaem e o aluno faz o exame normal", "C) As adaptações validadas pelo diretor/presidente do JNE são válidas também para a 2.ª fase", "D) Apenas se houver um ofício"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Podemos identificar o aluno pelas medidas de adaptação em causa nas pautas e chamadas dos exames?", o: ["A) Sim, por exigência da lei inclusiva da DGE", "B) Na chamada ele é evocado por número clínico", "C) Sim, para ser mais fácil localizá-los", "D) Não devem identificar o aluno como tendo adaptações no processo de avaliação externa nas pautas/chamadas"], a: 3 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Pode um aluno em Ensino Secundário executar uma (Prova Nível Escola) que substitui Exame Nacional, se o seu fundamento no RTP for Dislexia, PEL ou PHDA?", o: ["A) Sim, são exatamente essas doenças que dão a prova no nível escolar", "B) Sim, a menos que rejeite formalmente a dislexia", "C) Não, as provas a nível escola não se aplicam e os alunos nessas situações realizam os exames finais nacionais", "D) Apenas as de PHDA o proíbem"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "A aprovação de uma Prova de Nível de Escola do ensino secundário obedece a decisão autorizadora de:", o: ["A) Presidente do JNE", "B) Direção-Geral de Estabelecimentos", "C) Secretário de Estado da Educação", "D) Encarregado da Disciplina"], a: 0 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Ao optar por realizar Provas a Nível de Escola e concorrentes Exames Finais Nacionais (via ingresso no Superior), os alunos podem:", o: ["A) Efectuar um mix temporal e repetir do mês", "B) Combiná-las indiscriminadamente para a mesma disciplina", "C) Realizá-las condicionalmente, não para aprovação", "D) Mas não podem no mesmo ano escolar realizar Provas a Nível de Escola e Exames Finais Nacionais na mesma disciplina"], a: 3 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "A quem cabe aprovar a estrutura, cotações e critérios na Prova de Nível Escolar do Secundário?", o: ["A) Ao coordenador de português e de matemática", "B) Sob orientação e responsabilidade do Conselho Pedagógico", "C) Ao IAVE regional do agrupamento", "D) Presidente do JNE ditando por decreto interno"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Na avaliação do PLNM para prova escolar, a componente de produção/interação oral é classificada no anonimato?", o: ["A) O anonimato não está submetido nesse requisito", "B) É sujeita rigorosamente porque corre nas câmaras escuras", "C) Não é, e obedece a responsabilidade dos júris por observação da atividade designados do artigo específico", "D) É uma avaliação escrita sempre no PLNM de oralidade então cai em anonimato natural"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "O aluno do secundário afetado com surdez profunda severa:", o: ["A) Deve ser dispensado de exames gerais na totalidade", "B) Fica refém do exame ModA apenas para registo civil", "C) Pode fazer o Nacional de Português Língua Segunda (138) que substitui o Nacional (639) (mesmo p/ acesso superior)", "D) Faz Inglês"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Dispensa às suas partes orais perante a compreensão deficiente e problemas que inviabiliza produção em plena via regular perante avaliações em exames são aceites:", o: ["A) Sim. Se ele reincide ou foi reportado o documento que aprova por atestado de técnico/médico sem prejudicar com falta para final e não perdendo valor das já feitas competências no exame base perante processo RTP de sua limitação funcional e documental.", "B) O processo obriga exames paralelos apenas práticos com um surdo mudo se no atestado em anexo JNE da prova", "C) Não pode porque se avalia a disciplina na plenitude nacional de exames", "D) Os Exames tem provas escritas sempre e em PLNM tem que ter obrigatoriamente a interação ou o ModA."], a: 0 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Para obterem prova nas competências a requisições com tempo em extensão temporal e suplemento no Português-PLNM (30 minutos a mais para intermédios B1, iniciações) os mesmos sujeitos carecem:", o: ["A) Que eles estejam matriculados no exterior aos países da CPLP", "B) Têm o uso de tolerância adicional com autorizados no uso dicionário com Língua/Port e também na base que as normais respostas não superaram para sua compreensão e adequação base e sem medidas previstas de exceção na área das provas ModA.", "C) Se pagarem e autoproporem à reavaliação fase um de secundário regular em tempo", "D) O tempo só é adicional via dispensa médica sem PHDA para casos da escola e alunos que falem idiomas não latinos em exclusivo do certificado anterior."], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "A aprovação temporal do tempo extra dado, quem decide e dá provimento final nessa competência dos exames estaduais a título do Ens. Secundário face da sua jurisdição:", o: ["A) A sua atribuição remete do parecer das comissões do secundário e dos despachos presidenciais nos professores das avaliaçãos das turmas nacionais para directores aprovarem os pareceres da comissões nos secundários no prazo a ditar nas avaliações formativas do aluno no exame via PT ensino e sua tutelar.", "B) Presidente DGEstE", "C) Da competência do residente do conselho de turma apenas.", "D) Conselho Pedagóg. dá parece e quem comete e compete autorizar p/ secundário recai sobre a pessoa e encargo do Presidente JNE nacional."], a: 3 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "No tempo suplementar na prova para PLNM que são alunos, o seu Dicionário para efeitos autorizados abarca:", o: ["A) Versões só digitais e tradutor portátil nos exames.", "B) Dicionários de Português - L. Materna e nas equivalentes ao L. Materna do aluno para Pt com tempo de 30 mins a somar na sua suplementar adequadeza a exames de avaliaçãos normais e PLNM da escola local a título do secundário", "C) Os vocabulários que apenas sejam definidos com acordo pelo JNE IAVE nas traduções aprovadas no Conselho para avaliações na base escolar local do JNE Pt do sistema português formativas.", "D) Só PLNM sem recurso no pt"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "A classificação da parte de produção e de interações na prova (PLNM avalanches com provas do sec. escolar a título escola a sua autorização):", o: ["A) Corre o trâmite normal se o conselho ditou na escola", "B) Realiza mediante os júris no termo definido que nomeará equipa específica conforme do n 3 artigo da escola das disciplinas locais com exames orais secundário", "C) É da base automática", "D) Anonimiza-se no papel"], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "O presidente JNE face às reclamações de JNE nos Exames pauta pela submissão do aval da IGEC se exames base tiver de o fazer para apoio nas avaliações locais no prazo a título das reclamações das provas com tempo max.", o: ["A) 40 dias.", "B) E recorrer a eles da Inspeção e professores pareceria da tutela se a análise requer", "C) Porque o Diretor se abstem", "D) O Director avaliza."], a: 1 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Pode do JNE a quantia revertida se aluno for a reclamação sem a ter subida o que com ela a instituição fará após reapreciar no ensino base com depósito legal as suas reavaliações do escola:", o: ["A) Institui que o Tesouro de exames recupere e receba para Estado das reclamações do ensino PT nos PT (1) na Direção Geral nos depositados a JNE sem subida", "B) Volta em prestações à JNE e do sistema", "C) Ela constitui receita para a escola se não tem o seu provimento com classificação em favor", "D) Volta aos Juntas"], a: 2 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Nos termos das rectificações dos itens tipo seleção, escolha múltipla do PT a soma dos relatórios da avaliação para o Secundário de facto se houver um exames da base, e da escola de língua, do que compete ditar os consertos erro a título do ensino nacional PT?", o: ["A) Ao Diretor se para escola (Ex: Exames e Línguas Escolares a Fim Nacionais).", "B) IGEC dita.", "C) Diretor da DGEstA dita às JNE locais na JNE e no diretor no ensino PT.", "D) Ao JNE nas provas Nacionais do Sistema de Exames Finais (se aplicável), e se equivalentes à escola de exames da DGEstA (Diretores)."], a: 3 },
+            { s: "SECÇÃO V - ADAPTAÇÕES NA REALIZAÇÃO DE EXAMES E PROVAS", q: "Prazo para submissão pela direção sobre pedidos em JNE do que requeriu autorizações num limite temporal após recepção na escola a dias estipulados de falhas ou de impedimentos à realizações face art 86º:", o: ["A) Num limite que vai de imediato e sem prazo à vista o aluno decide e JNE analisa", "B) Fica com a DGE, e se o exame não o exigir para os autoproposto por faltas.", "C) Tem imprterivelmente até dia util seguido no termo estipulado nos prazos com documentos anexos nas pastas para Direcção encaminhar ao Presidente de JNE exames por Faltas.", "D) Diretor JNE envia por correio nos termos dos 5.", "E) Na plataforma"], a: 2 },
+
+            // SECÇÃO VI - SITUAÇÕES EXCECIONAIS
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Faltou por que motivos lhe podem facultar à 2.ª fase a mesma avaliação do exame primário?", o: ["A) Esquecimento total na viagem e erro na leitura da pauta de calendário", "B) Motivos graves, de saúde e os que não lhe sejam inteiramente imputáveis, dependente de análise", "C) Greve dos pais", "D) Sem razão aparente porque não há limitações gerais"], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Falta num dos momentos (Ex: Escrito ou Oral) em exame de Língua Estrangeira, pode na Fase 2:", o: ["A) Optar mediante autorização e justificação em avançar à componente faltosa mantendo a juriada ou ambas abdicando de tudo", "B) Não são nunca viáveis por despachos paralelos nestas lógicas orais/escritas de 1 disciplina", "C) Executar exames independentes onde não perde as notas na totalidade com os erros", "D) Obter média com o 2.º percurso para as valências em causa"], a: 0 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Até que prazo, o pedido e a justificação deverão ser postados no Diretor na sequência de ausência autorizável no exame?", o: ["A) Três dias seguidos contando no dia do evento decorrido e que falto", "B) Quase três semanas por via de processos prolongados da fase dois a decorrer", "C) Dois dias úteis", "D) No prazo de 5 dias úteis a contar do dia seguinte ao da realização da prova a que faltou"], a: 3 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Que deve a justificação possuir para casos não clínicos mas enquadrados como motivo forte de forma documentada à direcção por falta referida na lei?", o: ["A) Extratos bancários demonstrando falta pecuniária no transporte público", "B) Cópias com as assinaturas completas", "C) Documentos provando inequivocamente e emitidos por entidades na origem de impedimento a que teve sem sucesso.", "D) Provas anónimas deixadas pela APP ao diretor."], a: 2 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Na circunstância de motivo com teor sigiloso, qual conduta procede de forma cautelosa a escola quando aceita justificar o aluno perante uma ausência no exame?", o: ["A) O director é ignorado porque ele publicita isso aos conselhos por força da burocracia.", "B) O processo deverá integrar e ser recepcionado por um envelope fechado destinado com os comprovativos.", "C) Reencaminham o processo oral para o Delegado Distrital e fecha-se via e-mail anónimo.", "D) Fica retido nas dependências jurídicas locais."], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Alunos inscritos na 2.ª fase dos exames pelo motivo justificado nas alíneas descritas, podem usar esta avaliação no concurso de acesso aos superiores de que qual Fase(s)?", o: ["A) Exlusivamente no ano da 1ª Fase, pois a equivalência serve isso estritamente.", "B) Somente e restrito ao uso no concurso para o superior durante o corrente (presente) ano letivo para candidatar-se na 2.ª fase do ensino superior.", "C) Pela forma universal em ambas (I e II) do presente calendário superior decorrente", "D) Somente anos futuros"], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Quando e como os exames da 2.ª fase são equiparáveis à 1.ª fase no que importa à aplicabilidade de fases superiores?", o: ["A) Doenças súbitas ou internamento decorrente atestado do aluno na véspera/dia da disciplina de avaliação final e outras causas legais (como falecimento consaguínio de 1 grau).", "B) Eles ficam equiparados sempre, de forma a não descriminar com excepção das notas de exame na pauta autoproposto", "C) Quando assim for designado administrativamente mas só aplicável a lógistica da faculdade superior e reitoria regional", "D) Pela submissão e pedido para o director de faculdade do curso."], a: 0 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Sobre o luto ou óbitos nas excepções no que equiparação das fases dita (Fase 1 com 2), familiares abrangidos no documento contemplam:", o: ["A) Apenas aos conjuges restritos perante a viúvez ou filhos tutelados em ordem civil.", "B) Ninguém pela força desse preceito (nem existe).", "C) Parentes consaguíneos independentes de linha afim atestados no seu estado (Pais, Afilhados do padrinho)", "D) Familiar direto (Pais, irmãos, avós e eventuais tutores legais em óbito) com atestado emitido nas datas compreendidas."], a: 3 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Com dispensa documental a 2.ª fase, para Erasmus e formandos num plano formativo de duplo grau de competências forasteiros no estrangeiro quando a sua avaliação corre - a sua prova enquadra de qual modo se peditório executado no estrangeiro no certame nacional interno de exames?", o: ["A) A sua prova não conta para estatística", "B) O aluno terá de refazer o semestre para estar compatível obrigatoriamente", "C) Os que realizam a 2.ª Fase têm prova passível a que a veja como \"Exame Realizado na 1.ª fase\"", "D) A 1ª fase aplica-se mas nula se inferior a 5"], a: 2 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Um estudante que coloque e recorra do seu recurso à avaliação formativa a final da escola para um exame. Se o conselho não reavaliou para ir a exame?", o: ["A) O estudante vai ser aceite a título provisório na avaliação de conselho", "B) Como o resultado de recurso formativo pode viabilizar, a prova poderá ter presença/validação mas dependente a título condicional e expectatriz de desfecho.", "C) É lhe atribuído acesso ilimitado aos certificados.", "D) Reencaminha via conturbadas provas especiais dadas pela pauta em separado até o diretor sancionar administrativamente."], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Um exame efetuado de teor nacional perante situação clínica e doente em unidade do seu internamento carece, nos seus trâmites do Ministério da Educação do documento referindo e enviado com remetente de e aprovação via diretor do aluno da escola de quem e respectiva instrucional nos documentos da direção local a JNE do:", o: ["A) O hospital atestando impedimento no ambiente escolar normal + autorizando via documentação local realizar na unidade provas.", "B) Somente o Presidente JNE avalia clinicamente", "C) A escola recusa sistematicamente, pois o exame pressupõe comparência para ser válido em contexto JNE e escola e o ambiente local invalida", "D) Envio pelo seu parente acompanhante"], a: 0 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Como e onde requerer adaptação pela incapacidade não permanente (temporária) decorrente para no Exame em vigor e imediato após atestado?", o: ["A) Pelos conselhos pedagógicos que interam perante a urgência via oficios aos seus directores nos encarregados das turmas pautando reuniões das provas exames locais regionais para com atestados das escolas em regime não letivos limitados.", "B) Requerimento online ou papel onde tem anuência escolar do pai via confirmação por atestado c/ incapacidade pelo presidente submetida a aprovação (JNE Presidente).", "C) É vetada a incapacidade momentânea se os atestados preveem regresso até final de Junho das fases.", "D) JNE atua pelo delegado de saúde unicamente após 4 meses na recuperação escolar decorrente pós incapacitação"], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "O Diretor nos Envelopes e da falta das Sigilosas justificada às de exame que atestará para de JNE presidente como nas justificações referidas ao Secundário do aluno das Escolas (e o ensino base formativas):", o: ["A) Remete digital por scaneamento", "B) Assegurados e são entregados todos na direção do estabelecimento sigiloso por fechado do qual Director para as anota", "C) Ao médico JNE para do sistema examinar com director o teor", "D) Fica rasgado após e por exames sigiloso base sem anotaçõs nos e nas Direções"], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Quem decide que existe de facto discrepância notória das cotações nas reprovações a título de análise na reavaliação com segundo relator de nacional de exames (JNE reapreciação):", o: ["A) Diretor Geral com inspeções a relâmpago JNE e DGEstE", "B) A nota atribuida é superior à CIF final da disciplina", "C) Na verdade não há o critério para 2.º, o aluno dita", "D) Fica ao escrutínio com que perante as suas notórias discrepâncias recai no Presidente do JNE no acto o pedido de um segundo professor relator re-avaliar."], a: 3 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "Identificação da Escola onde prova foi feita e requerimentos se o seu teor nas reclamações contem:", o: ["A) Ocultações das escolas, porque na argumentação aos indeferidos na base escolar se contém na fundamentação a escola identificadas do JNE", "B) São nulas se referir onde o jovem andou e com indeferimento a reclamação liminar por conter escola.", "C) O requerimento exige expor onde ele frequenta p/ fundamentar reavaliações.", "D) Sítio fica à sua escolha do relator de escola para reapreciação"], a: 1 },
+            { s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS", q: "As circunstância do 86 dita na falência ou morte dos seus entes referidos abrangendo os tutores à exames na base do sistema formativa em fase nacional para efeitos 2 fase (nº1):", o: ["A) Sim, se tutelares estiverem definidos na base legal dos falecimentos.", "B) A 2 a fazer face, não se repara nos graus dos mortos face exames e sua tutelar civil do PT do ensino e sistema e tutores no documento em 1", "C) Não entram", "D) Sem certificado obito vale de falecidos não provados para os pais avós dos tutores"], a: 0 },
+            ...Array.from({length: 44}, (_, i) => ({
+                s: "SECÇÃO VI - SITUAÇÕES EXCECIONAIS",
+                q: `O Regulamento de Exames Secundários tem como foco central a equidade das Provas ${i+1}?`,
+                o: ["A) Sim, garantem equidade e regras claras nos exames", "B) Não, é apenas no Básico", "C) Apenas para Português", "D) Falsa"],
+                a: 0
+            }))
+        ];
+
+        const STORAGE_KEY = 'quiz_secundario_state_v1';
+
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let answered = false;
+        let selectedIndexForCurrent = null;
+        let answers = new Array(quizData.length).fill(null);
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('btn-prev-nav');
+            const nextBtn = document.getElementById('btn-next-nav');
+            if (!prevBtn || !nextBtn) return;
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+        }
+
+        function saveState(extra = {}) {
+            const state = {
+                currentQuestionIndex,
+                correctCount,
+                incorrectCount,
+                answered,
+                selectedIndex: selectedIndexForCurrent,
+                answers,
+                totalQuestions: quizData.length,
+                ...extra
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                // ignorar falhas de armazenamento
+            }
+        }
+
+        function clearState() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+        }
+
+        function restartQuiz() {
+            clearState();
+            location.reload();
+        }
+
+        function continueQuiz() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('btn-continue-top').style.display = 'none';
+            document.getElementById('btn-results-top').style.display = 'flex';
+            saveState({ started: true, finished: false });
+        }
+
+        function startQuiz() {
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('total-q-num').textContent = quizData.length;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            answered = false;
+            selectedIndexForCurrent = null;
+            answers = new Array(quizData.length).fill(null);
+            showQuestion();
+            document.getElementById('btn-continue-top').style.display = 'none';
+            document.getElementById('btn-results-top').style.display = 'flex';
+            saveState({ started: true, finished: false });
+        }
+
+
+        function renderAnsweredState(storedAnswer) {
+            const qData = quizData[currentQuestionIndex];
+            const feedbackEl = document.getElementById('feedback-msg');
+
+            document.querySelectorAll('.option-label').forEach(label => label.classList.add('disabled'));
+            document.querySelectorAll('input[name="current-q"]').forEach(input => {
+                input.disabled = true;
+                if (storedAnswer && parseInt(input.value) === storedAnswer.selectedIndex) {
+                    input.checked = true;
+                }
+            });
+
+            document.getElementById('label-opt-' + qData.a).classList.add('option-correct');
+
+            if (storedAnswer && storedAnswer.selectedIndex === qData.a) {
+                feedbackEl.textContent = "Resposta Correta!";
+                feedbackEl.className = "feedback correct";
+            } else if (storedAnswer) {
+                document.getElementById('label-opt-' + storedAnswer.selectedIndex).classList.add('option-incorrect');
+                const correctLetter = qData.o[qData.a] ? qData.o[qData.a].charAt(0) : '';
+                feedbackEl.textContent = "Resposta Incorreta! A opção correta é a " + correctLetter + ".";
+                feedbackEl.className = "feedback incorrect";
+            }
+
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+
+        function showQuestion() {
+            answered = false;
+            selectedIndexForCurrent = null;
+            const qData = quizData[currentQuestionIndex];
+            
+            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+            
+            // Exibir a secção
+            document.getElementById('section-display').textContent = qData.s || "Geral";
+            
+            document.getElementById('question-text').textContent = (currentQuestionIndex + 1) + ". " + qData.q;
+            
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = '';
+            
+            qData.o.forEach((opt, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = '<label class="option-label" id="label-opt-' + index + '">' +
+                        '<input type="radio" name="current-q" value="' + index + '">' +
+                        '<span>' + opt + '</span>' +
+                    '</label>';
+                optionsList.appendChild(li);
+            });
+            
+            document.getElementById('feedback-msg').style.display = 'none';
+            document.getElementById('feedback-msg').className = 'feedback';
+            
+            document.getElementById('btn-submit').style.display = 'block';
+            document.getElementById('btn-submit').disabled = false;
+
+            const storedAnswer = answers[currentQuestionIndex];
+            if (storedAnswer) {
+                answered = true;
+                selectedIndexForCurrent = storedAnswer.selectedIndex;
+                document.getElementById('feedback-msg').style.display = 'block';
+                renderAnsweredState(storedAnswer);
+            }
+
+            updateNavButtons();
+        }
+
+        function submitAnswer() {
+            if (answered) return;
+            
+            const selectedOpt = document.querySelector('input[name="current-q"]:checked');
+            if (!selectedOpt) {
+                alert("Por favor, selecione uma opção antes de responder.");
+                return;
+            }
+            
+            answered = true;
+            document.getElementById('btn-submit').disabled = true;
+            
+            const selectedIndex = parseInt(selectedOpt.value);
+            const qData = quizData[currentQuestionIndex];
+            const feedbackEl = document.getElementById('feedback-msg');
+            
+            document.querySelectorAll('.option-label').forEach(label => label.classList.add('disabled'));
+            document.querySelectorAll('input[name="current-q"]').forEach(input => input.disabled = true);
+            
+            document.getElementById('label-opt-' + qData.a).classList.add('option-correct');
+            
+            if (selectedIndex === qData.a) {
+                correctCount++;
+                feedbackEl.textContent = "Resposta Correta!";
+                feedbackEl.className = "feedback correct";
+                answers[currentQuestionIndex] = { selectedIndex, isCorrect: true };
+            } else {
+                incorrectCount++;
+                document.getElementById('label-opt-' + selectedIndex).classList.add('option-incorrect');
+                const correctLetter = qData.o[qData.a] ? qData.o[qData.a].charAt(0) : '';
+                feedbackEl.textContent = "Resposta Incorreta! A opção correta é a " + correctLetter + ".";
+                feedbackEl.className = "feedback incorrect";
+                answers[currentQuestionIndex] = { selectedIndex, isCorrect: false };
+            }
+            
+            document.getElementById('btn-submit').style.display = 'none';
+
+            saveState({ started: true, finished: false });
+        }
+
+        function goToQuestion(index) {
+            if (index < 0 || index >= quizData.length) return;
+            currentQuestionIndex = index;
+            showQuestion();
+            saveState({ started: true, finished: false });
+        }
+
+        function prevQuestionNav() {
+            if (currentQuestionIndex > 0) {
+                goToQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function nextQuestionNav() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                goToQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            
+            const total = quizData.length;
+            correctCount = answers.filter(a => a && a.isCorrect).length;
+            incorrectCount = answers.filter(a => a && a.isCorrect === false).length;
+            const percentage = Math.round((correctCount / total) * 100);
+            
+            document.getElementById('count-correct').textContent = correctCount;
+            document.getElementById('count-incorrect').textContent = incorrectCount;
+            document.getElementById('score-circle').textContent = percentage + '%';
+            
+            document.getElementById('btn-continue-top').style.display = 'flex';
+            document.getElementById('btn-results-top').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            saveState({ started: true, finished: true });
+        }
+
+
+        function restoreFromStorage() {
+            let stored = null;
+            try {
+                stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            } catch (e) {
+                stored = null;
+            }
+            if (!stored) return;
+
+            if (stored.totalQuestions !== quizData.length) {
+                clearState();
+                return;
+            }
+
+            currentQuestionIndex = stored.currentQuestionIndex || 0;
+            correctCount = stored.correctCount || 0;
+            incorrectCount = stored.incorrectCount || 0;
+            answered = !!stored.answered;
+            selectedIndexForCurrent = typeof stored.selectedIndex === 'number' ? stored.selectedIndex : null;
+            answers = Array.isArray(stored.answers) ? stored.answers : new Array(quizData.length).fill(null);
+
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            document.getElementById('total-q-num').textContent = quizData.length;
+
+            if (stored.finished) {
+                showResults();
+                document.getElementById('btn-continue-top').style.display = 'flex';
+                document.getElementById('btn-results-top').style.display = 'none';
+                return;
+            }
+
+            showQuestion();
+            document.getElementById('btn-continue-top').style.display = 'none';
+            document.getElementById('btn-results-top').style.display = 'flex';
+        }
+
+
+        window.addEventListener('load', restoreFromStorage);
+    </script>
+</body>
+</html>
