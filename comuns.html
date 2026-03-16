@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             --background: #f4f7f6;
             --card-bg: #ffffff;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--background);
@@ -21,17 +23,20 @@
             padding: 20px;
             line-height: 1.6;
         }
+
         h1 {
             text-align: center;
             color: var(--primary);
             padding-bottom: 10px;
         }
+
         .top-reset {
             display: flex;
             justify-content: center;
             margin: 15px 0 10px;
             gap: 10px;
         }
+
         .top-reset button {
             background-color: var(--primary);
             color: #fff;
@@ -45,9 +50,11 @@
             font-size: 1.4em;
             cursor: pointer;
         }
+
         .top-reset button:hover {
             filter: brightness(0.9);
         }
+
         .info {
             background-color: #e9ecef;
             padding: 15px;
@@ -55,28 +62,33 @@
             margin-bottom: 30px;
             text-align: center;
         }
+
         .question-card {
             background: var(--card-bg);
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
         }
+
         .question-title {
             font-weight: 600;
             font-size: 1.2em;
             margin-bottom: 15px;
             color: #2c3e50;
         }
+
         .options {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .options li {
             margin-bottom: 10px;
         }
+
         .option-label {
             display: flex;
             align-items: baseline;
@@ -88,17 +100,21 @@
             transition: background-color 0.2s;
             font-size: 1.1em;
         }
+
         .option-label:hover:not(.disabled) {
             background-color: #e2e6ea;
         }
+
         .option-label.disabled {
             cursor: not-allowed;
             opacity: 0.8;
         }
+
         .option-label input {
             margin-right: 15px;
             transform: translateY(2px);
         }
+
         .btn {
             display: block;
             width: 100%;
@@ -112,21 +128,26 @@
             margin-top: 20px;
             transition: background-color 0.3s;
         }
+
         .btn:hover:not(:disabled) {
             filter: brightness(0.85);
         }
+
         .btn:disabled {
             background-color: #6c757d;
             cursor: not-allowed;
             opacity: 0.7;
         }
+
         .btn-next {
             background-color: #17a2b8;
         }
+
         .btn-next:hover:not(:disabled) {
             background-color: #138496;
             filter: none;
         }
+
         .feedback {
             margin-top: 15px;
             padding: 15px;
@@ -135,35 +156,41 @@
             display: none;
             font-size: 1.1em;
         }
+
         .feedback.correct {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
             display: block;
         }
+
         .feedback.incorrect {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
             display: block;
         }
+
         .option-correct {
             background-color: #d4edda !important;
             border-color: var(--success) !important;
         }
+
         .option-incorrect {
             background-color: #f8d7da !important;
             border-color: var(--error) !important;
         }
+
         #results {
             background: var(--card-bg);
             padding: 30px;
             margin-top: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
             display: none;
         }
+
         .score-circle {
             width: 120px;
             height: 120px;
@@ -177,20 +204,31 @@
             font-weight: bold;
             margin: 0 auto 20px;
         }
+
         .stat-row {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
         }
+
         .stat {
             padding: 10px 20px;
             border-radius: 5px;
             font-weight: bold;
             font-size: 1.1em;
         }
-        .stat-correct { background-color: #d4edda; color: #155724; }
-        .stat-incorrect { background-color: #f8d7da; color: #721c24; }
+
+        .stat-correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .stat-incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
         .progress-container {
             margin-bottom: 20px;
             font-weight: bold;
@@ -198,6 +236,7 @@
             font-size: 1.2em;
             color: var(--primary);
         }
+
         .nav-controls {
             display: flex;
             justify-content: center;
@@ -205,6 +244,7 @@
             gap: 10px;
             margin-top: 10px;
         }
+
         .btn-icon {
             width: 46px;
             height: 46px;
@@ -215,41 +255,59 @@
             align-items: center;
             justify-content: center;
         }
+
+        #btn-submit {
+            width: auto;
+            margin-top: 0;
+            padding: 0 30px;
+            height: 46px;
+            border-radius: 23px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
+
 <body>
 
     <h1>Disposições Comuns</h1>
     <div class="top-reset">
         <button type="button" onclick="restartQuiz()" aria-label="Reiniciar questionário">&#x21BB;</button>
-        <button type="button" id="btn-continue-top" onclick="continueQuiz()" aria-label="Continuar a responder" style="display: none;">&#x21AA;</button>
-        <button type="button" id="btn-results-top" onclick="showResults()" aria-label="Ver resultados finais" style="display: none;">&#x1F4CB;</button>
-        <button type="button" onclick="window.location.href='index.html'" aria-label="Voltar à página inicial">&#x2302;</button>
+        <button type="button" id="btn-continue-top" onclick="continueQuiz()" aria-label="Continuar a responder"
+            style="display: none;">&#x21AA;</button>
+        <button type="button" onclick="window.location.href='index.html'"
+            aria-label="Voltar à página inicial">&#x2302;</button>
+        <button type="button" id="btn-results-top" onclick="showResults()" aria-label="Ver resultados finais"
+            style="display: none;">&#x1F4CB;</button>
     </div>
-    
+
     <div class="info" id="intro-screen">
-        <p>Este questionário interativo contém 50 perguntas baseadas no Capítulo IV - Disposições Comuns, e Tabelas Anexas.</p>
+        <p>Este questionário interativo contém 50 perguntas baseadas no Capítulo IV - Disposições Comuns, e Tabelas
+            Anexas.</p>
         <p><strong>Modo Sequencial:</strong> Terá de responder a uma pergunta de cada vez para poder avançar.</p>
         <button class="btn" onclick="startQuiz()">Iniciar Questionário</button>
-        <button class="btn btn-next" style="margin-top: 10px;" onclick="window.location.href='index.html'">Voltar à página inicial</button>
+        <button class="btn btn-next" style="margin-top: 10px;" onclick="window.location.href='index.html'">Voltar à
+            página inicial</button>
     </div>
 
     <div id="quiz-screen" style="display: none;">
         <div class="progress-container">
             Pergunta <span id="current-q-num">1</span> de <span id="total-q-num">50</span>
         </div>
-        
+
         <div class="question-card" id="question-card">
             <div class="question-title" id="question-text"></div>
             <ul class="options" id="options-list"></ul>
             <div class="feedback" id="feedback-msg"></div>
         </div>
 
-        <button type="button" class="btn" id="btn-submit" onclick="submitAnswer()">Responder</button>
         <div class="nav-controls">
-            <button type="button" class="btn btn-next btn-icon" id="btn-prev-nav" onclick="prevQuestionNav()" aria-label="Pergunta anterior">&#x276E;</button>
-            <button type="button" class="btn btn-next btn-icon" onclick="window.location.href='index.html'" aria-label="Voltar à página inicial">&#x2302;</button>
-            <button type="button" class="btn btn-next btn-icon" id="btn-next-nav" onclick="nextQuestionNav()" aria-label="Próxima pergunta">&#x276F;</button>
+            <button type="button" class="btn btn-next btn-icon" id="btn-prev-nav" onclick="prevQuestionNav()"
+                aria-label="Pergunta anterior">&#x276E;</button>
+            <button type="button" class="btn" id="btn-submit" onclick="submitAnswer()">Responder</button>
+            <button type="button" class="btn btn-next btn-icon" id="btn-next-nav" onclick="nextQuestionNav()"
+                aria-label="Próxima pergunta">&#x276F;</button>
         </div>
     </div>
 
@@ -355,7 +413,7 @@
         function clearState() {
             try {
                 localStorage.removeItem(STORAGE_KEY);
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function restartQuiz() {
@@ -417,25 +475,25 @@
             answered = false;
             selectedIndexForCurrent = null;
             const qData = quizData[currentQuestionIndex];
-            
+
             document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
             document.getElementById('question-text').textContent = (currentQuestionIndex + 1) + ". " + qData.q;
-            
+
             const optionsList = document.getElementById('options-list');
             optionsList.innerHTML = '';
-            
+
             qData.o.forEach((opt, index) => {
                 const li = document.createElement('li');
                 li.innerHTML = '<label class="option-label" id="label-opt-' + index + '">' +
-                        '<input type="radio" name="current-q" value="' + index + '">' +
-                        '<span>' + opt + '</span>' +
+                    '<input type="radio" name="current-q" value="' + index + '">' +
+                    '<span>' + opt + '</span>' +
                     '</label>';
                 optionsList.appendChild(li);
             });
-            
+
             document.getElementById('feedback-msg').style.display = 'none';
             document.getElementById('feedback-msg').className = 'feedback';
-            
+
             document.getElementById('btn-submit').style.display = 'block';
             document.getElementById('btn-submit').disabled = false;
 
@@ -452,25 +510,25 @@
 
         function submitAnswer() {
             if (answered) return;
-            
+
             const selectedOpt = document.querySelector('input[name="current-q"]:checked');
             if (!selectedOpt) {
                 alert("Por favor, selecione uma opção antes de responder.");
                 return;
             }
-            
+
             answered = true;
             document.getElementById('btn-submit').disabled = true;
-            
+
             const selectedIndex = parseInt(selectedOpt.value);
             const qData = quizData[currentQuestionIndex];
             const feedbackEl = document.getElementById('feedback-msg');
-            
+
             document.querySelectorAll('.option-label').forEach(label => label.classList.add('disabled'));
             document.querySelectorAll('input[name="current-q"]').forEach(input => input.disabled = true);
-            
+
             document.getElementById('label-opt-' + qData.a).classList.add('option-correct');
-            
+
             if (selectedIndex === qData.a) {
                 correctCount++;
                 feedbackEl.textContent = "Resposta Correta!";
@@ -484,7 +542,7 @@
                 feedbackEl.className = "feedback incorrect";
                 answers[currentQuestionIndex] = { selectedIndex, isCorrect: false };
             }
-            
+
             document.getElementById('btn-submit').style.display = 'none';
 
             saveState({ started: true, finished: false });
@@ -511,16 +569,16 @@
 
         function showResults() {
             document.getElementById('quiz-screen').style.display = 'none';
-            
+
             const total = quizData.length;
             correctCount = answers.filter(a => a && a.isCorrect).length;
             incorrectCount = answers.filter(a => a && a.isCorrect === false).length;
             const percentage = Math.round((correctCount / total) * 100);
-            
+
             document.getElementById('count-correct').textContent = correctCount;
             document.getElementById('count-incorrect').textContent = incorrectCount;
             document.getElementById('score-circle').textContent = percentage + '%';
-            
+
             document.getElementById('btn-continue-top').style.display = 'flex';
             document.getElementById('btn-results-top').style.display = 'none';
             document.getElementById('results').style.display = 'block';
@@ -567,4 +625,5 @@
         window.addEventListener('load', restoreFromStorage);
     </script>
 </body>
+
 </html>
