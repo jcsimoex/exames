@@ -67,5 +67,5 @@
   { s: "SECÇÃO V - SITUAÇÕES EXCECIONAIS", q: "Alunos faltosos à 1.ª fase por doença, em quantos dias entregam justificação?", o: ["A) 2 dias úteis", "B) 3 dias úteis", "C) 5 dias úteis", "D) 10 dias úteis"], a: 2 },
   { s: "SECÇÃO V - SITUAÇÕES EXCECIONAIS", q: "Para realização de provas em contexto hospitalar, é necessária a declaração de quem?", o: ["A) Apenas do médico", "B) Da direção da instituição hospitalar", "C) Da câmara municipal", "D) Dos pais apenas"], a: 1 },
   { s: "SECÇÃO V - SITUAÇÕES EXCECIONAIS", q: "A quem se remete a solicitação para realizar a prova no hospital?", o: ["A) Ao Diretor de Turma", "B) Ao EduQA", "C) Ao Presidente do JNE", "D) Ao Delegado de Saúde"], a: 2 },
-  { s: "SECÇÃO V - SITUAÇÕES EXCECIONAIS", q: "Alunos do 9.º ano com doença muito grave, avaliados internamente com aproveitamento, podem:", o: ["A) Ser dispensados pela escola", "B) Ser dispensados por despacho do presidente do JNE", "C) Fazer a prova oral apenas", "D) Reprovar administrativamente"], a: 1 },
+  { s: "SECÇÃO V - SITUAÇÕES EXCECIONAIS", q: "Alunos do 9.º ano com doença muito grave, avaliados internamente com aproveitamento, podem:", o: ["A) Ser dispensados pela escola", "B) Ser dispensados por despacho do presidente do JNE", "C) Fazer a prova oral apenas", "D) Reprovar administrativamente"], a: 1 }
 ]
